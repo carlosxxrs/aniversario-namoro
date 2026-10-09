@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para você ♥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noite:#1d0a17; --vinho:#4a1a35; --rosa:#e9788f; --petala:#f6c8d1;
+  --ouro:#e8b873; --papel:#fbeee6; --tinta:#4a2336; --texto:#f9e6ea; --suave:#d9aebb;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:'Jost',system-ui,sans-serif; font-weight:300; color:var(--texto); line-height:1.65;
+  background:radial-gradient(120% 80% at 50% 0%,#4a1a35 0%,#2b1020 45%,#1d0a17 100%) fixed;
+  min-height:100vh; overflow-x:hidden;
+}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; margin:0}
+h2{font-size:clamp(2rem,6vw,2.8rem); font-style:italic; margin-bottom:.4rem}
+p{margin:0 0 1rem}
+button{font:inherit; cursor:pointer}
+:focus-visible{outline:2px solid var(--ouro); outline-offset:3px}
+[hidden]{display:none !important}
+
+/* pétalas */
+#petalas{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden}
+#petalas span{
+  position:absolute; top:-8%; width:10px; height:14px; background:var(--rosa); opacity:.35;
+  border-radius:80% 0 80% 0; animation:cair linear infinite;
+}
+@keyframes cair{
+  to{transform:translate3d(var(--dx,40px),115vh,0) rotate(540deg)}
+}
+@media (prefers-reduced-motion:reduce){
+  #petalas{display:none}
+  *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+}
+
+/* login */
+#login{
+  position:relative; z-index:1; min-height:100vh; display:grid; place-items:center; padding:1.5rem;
+  transition:opacity .8s ease, transform .8s ease;
+}
+#login.saindo{opacity:0; transform:translateY(-24px) scale(.98)}
+.envelope{
+  position:relative; width:min(420px,100%); padding:4.2rem 2rem 2.2rem; text-align:center;
+  background:linear-gradient(170deg,#5a2142,#3a1430); border:1px solid rgba(246,200,209,.25);
+  border-radius:6px; box-shadow:0 30px 60px rgba(0,0,0,.45);
+}
+.envelope::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:78px;
+  background:linear-gradient(170deg,#6a2a50,#4a1a35);
+  clip-path:polygon(0 0,100% 0,50% 100%); border-radius:6px 6px 0 0;
+}
+.selo{
+  position:absolute; left:50%; top:46px; transform:translateX(-50%); width:56px; height:56px; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#f08fa3,#b8344f); color:#fff;
+  display:grid; place-items:center; font-size:1.6rem; box-shadow:0 6px 14px rgba(0,0,0,.4);
+}
+.envelope h1{font-size:clamp(1.9rem,6vw,2.4rem); font-style:italic; margin-top:1.2rem}
+.envelope p{color:var(--suave)}
+.campo{
+  width:100%; margin:.6rem 0 1rem; padding:.8rem 1rem; text-align:center; letter-spacing:.2em; font:500 1.4rem 'Jost',sans-serif;
+  color:var(--texto); background:rgba(0,0,0,.25); border:1px solid rgba(246,200,209,.35); border-radius:4px;
+}
+.campo::placeholder{color:rgba(217,174,187,.5); letter-spacing:.15em}
+.btn{
+  background:var(--rosa); color:#2b1020; border:0; border-radius:999px; padding:.75rem 1.8rem; font-weight:500;
+  transition:transform .15s, background .15s;
+}
+.btn:hover{background:#f08fa3; transform:translateY(-1px)}
+.erro{min-height:1.6rem; color:#ffb3c0; font-size:.95rem; margin:.8rem 0 0}
+.tremer{animation:tremer .35s}
+@keyframes tremer{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* site */
+main{position:relative; z-index:1}
+section,.hero{max-width:720px; margin:0 auto; padding:4.5rem 1.4rem}
+.hero{text-align:center; padding-top:6rem}
+.hero .ola{color:var(--petala); font-size:1.1rem; margin-bottom:.4rem}
+.hero h1{font-size:clamp(3rem,13vw,5.4rem); font-style:italic; line-height:1}
+.contador{display:grid; grid-template-columns:repeat(3,1fr); gap:1.4rem .8rem; margin:2.4rem 0 1.6rem}
+@media (min-width:600px){.contador{grid-template-columns:repeat(6,1fr)}}
+.un .num{display:block; font-size:clamp(2.4rem,9vw,3.4rem); line-height:1; color:var(--ouro); font-variant-numeric:tabular-nums}
+.un .rot{color:var(--suave); font-size:.9rem}
+.total{color:var(--petala)}
+.desde{color:var(--suave); font-size:.95rem}
+.sub{color:var(--suave)}
+.fio{height:1px; max-width:120px; margin:0 auto; background:linear-gradient(90deg,transparent,var(--rosa),transparent)}
+
+/* linha do tempo */
+.linha{list-style:none; margin:2.2rem 0 0; padding:0 0 0 1.6rem; border-left:1px solid rgba(246,200,209,.35)}
+.linha li{position:relative; padding:0 0 2rem 1.2rem}
+.linha li::before{
+  content:""; position:absolute; left:calc(-1.6rem - 5px); top:.55rem; width:9px; height:9px; border-radius:50%;
+  background:var(--rosa); box-shadow:0 0 0 4px rgba(233,120,143,.2);
+}
+.linha .quando{color:var(--ouro); font-size:.95rem}
+.linha h3{font-size:1.6rem; font-style:italic}
+.linha p{color:var(--texto); margin:0 0 .9rem}
+.linha .foto{display:block; width:100%; max-width:440px; aspect-ratio:4/3; object-fit:cover; border-radius:4px; margin:.8rem 0 1rem; box-shadow:0 12px 24px rgba(0,0,0,.35)}
+.linha .foto.inteira{aspect-ratio:auto; height:auto; object-fit:contain; max-width:230px}
+/* fotos */
+.polaroids{display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:1.6rem; margin-top:2.2rem}
+.pol{margin:0; background:var(--papel); color:var(--tinta); padding:.7rem .7rem 1rem; box-shadow:0 12px 24px rgba(0,0,0,.35); transform:rotate(-1.4deg)}
+.pol:nth-child(even){transform:rotate(1.6deg)}
+.pol img,.pol .vazia{display:block; width:100%; aspect-ratio:1/1; object-fit:cover; background:#e9cdd3}
+.pol .vazia{display:grid; place-items:center; font-size:2.4rem; color:var(--rosa)}
+.pol figcaption{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.15rem; margin-top:.6rem; line-height:1.3; text-align:center}
+
+/* quiz */
+.quiz{margin-top:2rem; padding:1.6rem; border:1px solid rgba(246,200,209,.25); border-radius:6px; background:rgba(0,0,0,.18)}
+.quiz .prog{color:var(--suave); font-size:.95rem}
+.quiz h3{font-size:1.7rem; font-style:italic; margin:.3rem 0 1.2rem; line-height:1.25}
+.opcoes{display:grid; gap:.6rem}
+.op{
+  text-align:left; padding:.8rem 1rem; color:var(--texto); background:rgba(255,255,255,.05);
+  border:1px solid rgba(246,200,209,.3); border-radius:4px; transition:background .15s;
+}
+.op:hover:not(:disabled){background:rgba(233,120,143,.18)}
+.op.certa{background:rgba(120,200,150,.25); border-color:#8fd6a9}
+.op.errada{background:rgba(220,90,110,.25); border-color:#e8798d}
+.fb{margin:1rem 0 0; min-height:1.5rem; color:var(--petala)}
+.quiz .btn{margin-top:.8rem}
+
+/* surpresa */
+#surpresa{text-align:center}
+#surpresa h2{font-size:clamp(2.4rem,9vw,3.6rem)}
+#surpresa .msg{max-width:560px; margin:1.4rem auto; font-family:'Cormorant Garamond',serif; font-size:1.4rem; line-height:1.55}
+#surpresa iframe,#surpresa video{width:100%; max-width:560px; border:0; border-radius:8px; margin:1rem auto}
+.vales{list-style:none; padding:0; margin:2rem auto 0; max-width:480px; display:grid; gap:.8rem}
+.vales li{padding:1rem 1.2rem; border:1px dashed var(--ouro); border-radius:6px; color:var(--ouro); font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-style:italic}
+.coracao{position:fixed; top:-30px; z-index:50; color:var(--rosa); pointer-events:none; animation:chuva linear forwards}
+@keyframes chuva{to{transform:translateY(112vh) rotate(var(--r,40deg)); opacity:.9}}
+footer{position:relative; z-index:1; text-align:center; padding:3rem 1rem 4rem; color:var(--suave); font-size:.95rem}
+#especial{text-align:center}
+.btn.suave{background:transparent; color:var(--texto); border:1px solid rgba(246,200,209,.5)}
+.revelado{margin-top:2rem; animation:surgir 1.4s ease both}
+@keyframes surgir{from{opacity:0; transform:translateY(18px) scale(.97)}to{opacity:1; transform:none}}
+.especial-foto{display:block; width:100%; max-width:380px; aspect-ratio:1/1; object-fit:cover; margin:0 auto; border-radius:4px; box-shadow:0 16px 36px rgba(0,0,0,.45)}
+.especial-legenda{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.4rem; margin:1rem 0 .4rem; color:var(--petala)}
+.especial-texto{max-width:520px; margin:0 auto 1.4rem; font-family:'Cormorant Garamond',serif; font-size:1.3rem; line-height:1.55}
+</style>
+</head>
+<body>
+
+<div id="petalas" aria-hidden="true"></div>
+
+<!-- LOGIN -->
+<section id="login" aria-labelledby="loginTitulo">
+  <form class="envelope" id="formLogin" autocomplete="off">
+    <div class="selo" aria-hidden="true">♥</div>
+    <h1 id="loginTitulo">Só para você</h1>
+    <p>Digite a data em que tudo começou.</p>
+    <label for="data" style="position:absolute;left:-9999px">Data do namoro</label>
+    <input class="campo" id="data" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10">
+    <button class="btn" type="submit">Abrir</button>
+    <p class="erro" id="erro" role="alert"></p>
+  </form>
+</section>
+
+<!-- SITE -->
+<main id="site" hidden>
+  <header class="hero">
+    <p class="ola serif" id="ola"></p>
+    <h1>Juntos há</h1>
+    <div class="contador" id="contador" aria-live="off"></div>
+    <p class="total" id="total"></p>
+    <p class="desde" id="desde"></p>
+  </header>
+
+  <div class="fio"></div>
+
+  <section id="historia">
+    <h2>Nossa história</h2>
+    <p class="sub">Alguns dos momentos que fizeram esse ano valer a pena.</p>
+    <ol class="linha" id="linha"></ol>
+  </section>
+
+  <section id="fotos">
+    <h2>Nossos momentos</h2>
+    <div class="polaroids" id="grade"></div>
+  </section>
+
+  <section id="quizSec">
+    <h2>Quanto você sabe sobre nós?</h2>
+    <p class="sub">Responda tudo. No final tem uma surpresa.</p>
+    <div class="quiz" id="quiz"></div>
+  </section>
+
+  <section id="surpresa" hidden>
+    <h2 id="surpTitulo"></h2>
+    <div class="msg" id="surpMsg"></div>
+    <div id="surpMidia"></div>
+    <ul class="vales" id="vales"></ul>
+  </section>
+
+  <section id="especial">
+    <h2 id="espTitulo"></h2>
+    <p class="sub" id="espDica"></p>
+    <button class="btn" id="espBotao" type="button"></button>
+    <div class="revelado" id="espConteudo" hidden>
+      <img class="especial-foto" id="espFoto" alt="">
+      <p class="especial-legenda" id="espLegenda"></p>
+      <div class="especial-texto" id="espTexto"></div>
+      <button class="btn suave" id="espMusica" type="button">Pausar música</button>
+    </div>
+    <audio id="espAudio" loop preload="none"></audio>
+  </section>
+
+  <footer id="rodape"></footer>
+</main>
+
+<script>
+/* =====================================================
+   ✏️  EDITE AQUI: tudo que é pessoal fica neste bloco
+   ===================================================== */
+const CONFIG = {
+  nomeDela: "meu amor",                 // como você a chama
+  seuNome: "Carlos Eduardo",              // assinatura das cartas
+  inicio: new Date(2025, 9, 10, 22, 7, 0), // ano, mês (0 = janeiro), dia, hora, minuto, segundo
+  dica: "Dica: é o dia em que a gente oficializou.",
+  rodape: "Feito com carinho, só para você.",
+
+  historia: [
+    { quando: "O começo",
+      titulo: "Quando a gente começamos a conversar",
+      foto: "fotos/historia1.jpeg",
+      inteira: true,
+      texto: "Nesta época, eu nem poderia imaginar que a gente iria conversar e se tornar o que somos hoje. Mas, para falar a verdade, sempre quis ficar com você. Até falava com o Léo que sentia que você tinha terminado e que eu teria coragem de dar em cima de você. Ele mesmo virava para mim e me contrariava, dizendo que você ia casar (obs.: só esqueceu de falar com quem você ia casar, haha). Passou uma semana e você reagiu à minha nota. Dali começou uma bela história de amor e de briga, rsrs. No final das contas, sempre soube que seríamos nós, mesmo nas brigas e nas semanas em que você não falava comigo. Eu sempre te amei, e toda vez que a gente brigava, eu ficava mal porque sabia o quanto você era especial para mim." 
+    },
+    { quando: "A nossa intimidade",
+      titulo: "As chamadas e o ff",
+      foto: "fotos/historia2.jpeg",
+      inteira: true,
+      texto: "Essa foto só representa o quanto eu ficava feliz quando meu celular tocava e era você, sozinha. Você, na época, sempre ligava para mim e para o Léo. Quantas vezes mandei mensagem para o Léo pedindo para ele não atender, pois eu queria só ficar escutando a sua voz! Mas você fazia questão de que o Léo atendesse, e eu ficava com muita raiva. Só de te ouvir, porém, já estampava a minha felicidade; e até mesmo quando você dormia na chamada, eu já ficava te admirando." 
+    },
+    { quando: "Ficando",
+      titulo: "O dia em que comecamos a ficar serio",
+      foto: "fotos/historia3.jpeg" ,
+      inteira: true,
+      texto: `Mesmo depois dos últimos acontecimentos, quando eu pensava que tudo tinha acabado e que nunca mais queria olhar na sua cara — de tanto ódio de você que estava no meu coração —, as coisas mudaram. Foi logo por conta de um story que você postou de um bolo, falando sobre um resultado inesperado de exame que tinha recebido (obs.: antes de a gente parar de conversar, você faria um breve exame por conta do seu pulmão). Mesmo com ódio de você, não aguentei e te mandei mensagem perguntando como você estava, pois continuava me preocupando com você.
+      Mesmo que todos os meus amigos falassem para eu parar de ser bobo, e até dissessem que iriam parar de conversar comigo se eu não parasse de te seguir, eu continuei. E como é o mundo, né? Se eu tivesse parado de te seguir, não estaríamos juntos. Dali a gente começou a se aproximar de novo, fizemos três encontros seguidos e começamos a nos conectar.
+      Escolhi esta foto no hospital porque você sabe do susto que tomei quando soube que você tinha desmaiado dentro de casa e precisado ir correndo para a casa de saúde. Eu não podia fazer nada, pois estava voltando de SP; mas, quando cheguei, só pensei em ir direto até você e te dar muitos beijos, como os que te dei nesse dia — mesmo antes de a gente ter começado a namorar.`
+    },
+    { quando: "Namoro",
+      titulo: "O dia mais importante da minha vida",
+      foto: "fotos/historia4.jpeg",
+      inteira: true ,
+      texto: "Nesse dia fiquei muito ansioso, pois queria preparar um dia inesquecível para você. Você tinha comentado comigo que nunca tinha ganhado flores, então quis comprar uma das mais bonitas para você, porque queria a sua felicidade e que esse dia fosse marcante para nós dois. Envolvi tanta gente nisso que você não tem nem noção, e graças a Deus deu tudo certo! Quando me ajoelhei para você e fiz o pedido, estava completo de felicidade. Graças a Deus estamos aqui! Não esqueço da cara que você fez até hoje, sem acreditar no que estava acontecendo." 
+    },
+    { quando: "Hoje",
+      titulo: "1 ano de nós",
+      foto: "fotos/historia5.jpeg",
+      inteira: true,
+      texto: "E hoje sou o homem mais feliz do mundo por te ter, e não existe palavra que consiga declarar o tamanho do meu amor por você. Você se tornou a pessoa mais importante para mim, e quero que a gente só se separe quando um de nós morrer (que seja eu, pois não quero ter que te enterrar). Quero que você seja a mãe dos meus filhos. O que mais desejo, acima de tudo, é ter a nossa casa e morar com você para construir a nossa família — e tenho certeza de que vamos fazer isso, pois, de um jeito ou de outro, se Deus permitir, vai acontecer. Que venham muitos aniversários de namoro pela frente (obs.: poucos, né? Porque logo quero comemorar é o aniversário de casamento!). Eu te amo demais, meu grande amor!" 
+    }
+  ],
+  especial: {
+    titulo: "O dia em que te assumi para o Brasil",
+    dica: "Toque no botão para revelar.",
+    botao: "Revelar",
+    foto: "fotos/especial.jpeg",
+    legenda: "A foto mais linda da minha galeria",
+    texto: `Foi com essa música que te assumi para o Brasil e para o mundo inteiro, mostrando que te amo e que quero estar do seu lado nos momentos ruins e bons, meu amor. Te amo!`,
+    musica: "fotos/musica.mp4"
+  },
+  // coloque as fotos na pasta "fotos" com esses nomes (ou troque os nomes)
+  fotos: [
+    { src: "fotos/fotos1.jpeg", legenda: "O famoso story" },
+    { src: "fotos/fotos2.jpeg", legenda: "O retiro que decidimos oq seria de nós" },
+    { src: "fotos/fotos3.jpeg", legenda: "Você com mania de me morder" },
+    { src: "fotos/fotos4.jpeg", legenda: "Nossa viagem" },
+    { src: "fotos/fotos5.jpeg", legenda: "Nosso lugar que a gente ficava" },
+    { src: "fotos/fotos6.jpeg", legenda: "Na casa de saúde" },
+    { src : "fotos/fotos7.jpeg", legenda: "Um dos seus lugares favoritos"},
+    { src : "fotos/fotos8.jpeg", legenda: "Almoçando no domingo"}
+  ],
+
+  // quiz: "certa" é a posição da resposta certa (0 = primeira opção)
+  quiz: [
+    { pergunta: "Como nos conhecemos?",
+      opcoes: ["Em Portela", "Por algum amigo", "No retiro", "Aleatoriamente"], certa: 2,
+      comentario: "Claro que você lembra." },
+    { pergunta: "O que nós fazíamos quando éramos amigos?",
+      opcoes: ["Brigar", "Ficar", "Lanchar", "Ficar em call e jogando ff"], certa: 3,
+      comentario: "Época boa! " },
+    { pergunta: "Onde saíamos mais vezes?",
+      opcoes: ["Sedução", "Mad Fire", "Ice e coffee", "Sandubão"], certa: 2,
+      comentario: "Vamos ver se você lembra." },
+    { pergunta: "Onde que foi o nosso primeiro beijo?",
+      opcoes: ["Na minha casa", "Em Portela", "Em festa", "Na estrada de Portela"], certa: 0,
+      comentario: "Que dia doido." },
+    { pergunta: "O que eu mais gosto em você?",
+      opcoes: ["O sorriso", "O jeito de rir", "O jeito de cuidar", "Tudo isso"], certa: 3,
+      comentario: "Todas estão certas, mas essa é a mais certa." }
+  ],
+
+  surpresa: {
+    titulo: "Feliz 1 ano, meu amor",
+    mensagem: "Este ano, para mim, está a ser um ano cheio de aprendizagem, com muitas novidades a acontecer na minha vida, como a faculdade e, com certeza, namorar pela primeira vez. Mas, contigo, tudo fica leve. Falar que durante este primeiro ano tudo foram flores seria mentira, pois passámos por várias turbulências e eu tinha medo daquele famoso boato de que (aos 3 meses o namoro esfria). E, com certeza, o nosso namoro já arrefeceu várias vezes, mas, aos 45 minutos do segundo tempo, a gente fazia esquentar de novo. É assim que vamos continuar, porque o nosso amor é muito maior do que qualquer turbulência por que passámos ou venhamos a passar. Espero fazer muitos programinhas como este para ti, meu amor. Feliz 1 ano de namoro, te amo muito!",
+    spotify: "",   // opcional: cole o link de incorporar do Spotify (https://open.spotify.com/embed/track/...)
+    video: "",     // opcional: caminho de um vídeo seu, ex: "video.mp4"
+    vales: [       // opcional: vales para ela
+      "Vale lanchar no lugar que você escolher",
+      "Vale um dia inteiro só nosso",
+      "Vale um abraço de 10 minutos"
+    ]
+  }
+};
+/* ===================================================== */
+
+const $ = (s) => document.querySelector(s);
+const pad = (n) => String(n).padStart(2, "0");
+const fmtData = (d, o) => d.toLocaleDateString("pt-BR", o || { day: "numeric", month: "long", year: "numeric" });
+const modoTeste = /[?&]teste/.test(location.search); // ?teste=1 libera todas as cartas para você conferir
+const reduzir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* pétalas de fundo */
+(function petalas() {
+  if (reduzir) return;
+  const box = $("#petalas");
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement("span");
+    s.style.left = Math.random() * 100 + "%";
+    s.style.animationDuration = 14 + Math.random() * 14 + "s";
+    s.style.animationDelay = -Math.random() * 24 + "s";
+    s.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+    s.style.transform = "scale(" + (0.6 + Math.random() * 0.9) + ")";
+    box.appendChild(s);
+  }
+})();
+
+/* login */
+const senhaCompleta = pad(CONFIG.inicio.getDate()) + pad(CONFIG.inicio.getMonth() + 1) + CONFIG.inicio.getFullYear();
+const senhaCurta = senhaCompleta.slice(0, 4) + senhaCompleta.slice(6);
+const campo = $("#data");
+campo.addEventListener("input", () => {
+  const d = campo.value.replace(/\D/g, "").slice(0, 8);
+  campo.value = d.length > 4 ? d.slice(0, 2) + "/" + d.slice(2, 4) + "/" + d.slice(4)
+              : d.length > 2 ? d.slice(0, 2) + "/" + d.slice(2) : d;
+});
+$("#formLogin").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const d = campo.value.replace(/\D/g, "");
+  if (d === senhaCompleta || d === senhaCurta) {
+    $("#login").classList.add("saindo");
+    setTimeout(() => { $("#login").hidden = true; abrirSite(); }, reduzir ? 0 : 800);
+  } else {
+    $("#erro").textContent = "Essa não é a data. " + CONFIG.dica;
+    const f = $("#formLogin"); f.classList.remove("tremer"); void f.offsetWidth; f.classList.add("tremer");
+  }
+});
+
+/* contador */
+function diferenca(a, b) {
+  let y = b.getFullYear() - a.getFullYear(), m = b.getMonth() - a.getMonth(), d = b.getDate() - a.getDate();
+  let h = b.getHours() - a.getHours(), mi = b.getMinutes() - a.getMinutes(), s = b.getSeconds() - a.getSeconds();
+  if (s < 0) { s += 60; mi--; }
+  if (mi < 0) { mi += 60; h--; }
+  if (h < 0) { h += 24; d--; }
+  if (d < 0) { d += new Date(b.getFullYear(), b.getMonth(), 0).getDate(); m--; }
+  if (m < 0) { m += 12; y--; }
+  return { y, m, d, h, mi, s };
+}
+function plural(n, um, varios) { return n === 1 ? um : varios; }
+function atualizar() {
+  const agora = new Date();
+  const t = agora < CONFIG.inicio ? { y: 0, m: 0, d: 0, h: 0, mi: 0, s: 0 } : diferenca(CONFIG.inicio, agora);
+  const un = [
+    [t.y, "ano", "anos"], [t.m, "mês", "meses"], [t.d, "dia", "dias"],
+    [t.h, "hora", "horas"], [t.mi, "minuto", "minutos"], [t.s, "segundo", "segundos"]
+  ];
+  $("#contador").innerHTML = un.map(([n, u, v]) =>
+    '<div class="un"><span class="num">' + (u === "ano" || u === "mês" || u === "dia" ? n : pad(n)) +
+    '</span><span class="rot">' + plural(n, u, v) + "</span></div>").join("");
+  const dias = Math.max(0, Math.floor((agora - CONFIG.inicio) / 864e5));
+  $("#total").textContent = "São " + dias.toLocaleString("pt-BR") + " dias de nós.";
+}
+
+function paragrafos(el, texto) {
+  el.innerHTML = "";
+  texto.split(/\n+/).map((p) => p.trim()).filter(Boolean).forEach((p) => {
+    const e = document.createElement("p"); e.textContent = p; el.appendChild(e);
+  });
+}
+
+/* linha do tempo e fotos */
+function montarConteudo() {
+  $("#ola").textContent = "Oi, " + CONFIG.nomeDela;
+  $("#desde").textContent = "desde " + fmtData(CONFIG.inicio);
+  $("#rodape").textContent = CONFIG.rodape;
+
+  $("#linha").innerHTML = "";
+  CONFIG.historia.forEach((h) => {
+    const li = document.createElement("li");
+    li.innerHTML = '<span class="quando"></span><h3></h3><div class="foto-box"></div><div class="texto"></div>';
+    li.querySelector(".quando").textContent = h.quando;
+    li.querySelector("h3").textContent = h.titulo;
+    if (h.foto) {
+      const img = new Image();
+      img.className = "foto"; img.alt = h.titulo; img.loading = "lazy"; img.src = h.foto;
+      if (h.inteira) img.classList.add("inteira");
+      img.onerror = () => img.remove();
+      li.querySelector(".foto-box").appendChild(img);
+    }
+    paragrafos(li.querySelector(".texto"), h.texto);
+    $("#linha").appendChild(li);
+  });
+
+  $("#grade").innerHTML = "";
+  CONFIG.fotos.forEach((f) => {
+    const fig = document.createElement("figure");
+    fig.className = "pol";
+    const img = new Image();
+    img.alt = f.legenda; img.loading = "lazy"; img.src = f.src;
+    img.onerror = () => { const v = document.createElement("div"); v.className = "vazia"; v.textContent = "♥"; img.replaceWith(v); };
+    const cap = document.createElement("figcaption"); cap.textContent = f.legenda;
+    fig.append(img, cap);
+    $("#grade").appendChild(fig);
+  });
+}
+
+/* quiz */
+let qi = 0, acertos = 0;
+function mostrarPergunta() {
+  const box = $("#quiz"), q = CONFIG.quiz[qi];
+  box.innerHTML = '<div class="prog"></div><h3></h3><div class="opcoes"></div><p class="fb" aria-live="polite"></p><div class="acao"></div>';
+  box.querySelector(".prog").textContent = "Pergunta " + (qi + 1) + " de " + CONFIG.quiz.length;
+  box.querySelector("h3").textContent = q.pergunta;
+  q.opcoes.forEach((txt, i) => {
+    const b = document.createElement("button");
+    b.className = "op"; b.textContent = txt;
+    b.addEventListener("click", () => responder(i, box, q));
+    box.querySelector(".opcoes").appendChild(b);
+  });
+}
+function responder(i, box, q) {
+  const botoes = [...box.querySelectorAll(".op")];
+  botoes.forEach((b) => (b.disabled = true));
+  botoes[q.certa].classList.add("certa");
+  if (i === q.certa) { acertos++; box.querySelector(".fb").textContent = "Acertou! " + (q.comentario || ""); }
+  else { botoes[i].classList.add("errada"); box.querySelector(".fb").textContent = "Quase! " + (q.comentario || ""); }
+  const prox = document.createElement("button");
+  prox.className = "btn"; prox.type = "button";
+  const ultima = qi === CONFIG.quiz.length - 1;
+  prox.textContent = ultima ? "Ver resultado" : "Próxima";
+  prox.addEventListener("click", () => { if (ultima) resultado(); else { qi++; mostrarPergunta(); } });
+  box.querySelector(".acao").appendChild(prox);
+  prox.focus();
+}
+function resultado() {
+  const total = CONFIG.quiz.length, box = $("#quiz");
+  const frase = acertos === total ? "Você sabe tudo sobre nós." : acertos >= total / 2 ? "Você me conhece bem." : "Ainda bem que temos a vida toda para você aprender.";
+  box.innerHTML = '<h3></h3><p></p><button class="btn" type="button">Abrir minha surpresa</button>';
+  box.querySelector("h3").textContent = "Você acertou " + acertos + " de " + total;
+  box.querySelector("p").textContent = frase;
+  box.querySelector(".btn").addEventListener("click", revelarSurpresa);
+}
+
+/* surpresa */
+function revelarSurpresa() {
+  const s = CONFIG.surpresa, sec = $("#surpresa");
+  $("#surpTitulo").textContent = s.titulo;
+  paragrafos($("#surpMsg"), s.mensagem);
+  const m = $("#surpMidia"); m.innerHTML = "";
+  if (s.spotify) { const f = document.createElement("iframe"); f.src = s.spotify; f.height = 152; f.allow = "encrypted-media"; m.appendChild(f); }
+  if (s.video) { const v = document.createElement("video"); v.src = s.video; v.controls = true; v.playsInline = true; m.appendChild(v); }
+  $("#vales").innerHTML = "";
+  (s.vales || []).forEach((t) => { const li = document.createElement("li"); li.textContent = t; $("#vales").appendChild(li); });
+  sec.hidden = false;
+  sec.scrollIntoView({ behavior: reduzir ? "auto" : "smooth" });
+  if (!reduzir) chuvaDeCoracoes();
+}
+function chuvaDeCoracoes() {
+  for (let i = 0; i < 45; i++) {
+    const h = document.createElement("span");
+    h.className = "coracao"; h.textContent = "♥";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 14 + Math.random() * 26 + "px";
+    h.style.animationDuration = 3 + Math.random() * 3 + "s";
+    h.style.animationDelay = Math.random() * 1.5 + "s";
+    h.style.setProperty("--r", (Math.random() * 120 - 60) + "deg");
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 8000);
+  }
+}
+
+function montarEspecial() {
+  const e = CONFIG.especial;
+  if (!e) { $("#especial").hidden = true; return; }
+  const audio = $("#espAudio");
+  $("#espTitulo").textContent = e.titulo;
+  $("#espDica").textContent = e.dica || "";
+  $("#espBotao").textContent = e.botao || "Toque para revelar";
+  audio.src = e.musica;
+
+  $("#espBotao").addEventListener("click", () => {
+    $("#espBotao").hidden = true;
+    $("#espDica").hidden = true;
+    const foto = $("#espFoto");
+    foto.src = e.foto; foto.alt = e.titulo;
+    $("#espLegenda").textContent = e.legenda || "";
+    paragrafos($("#espTexto"), e.texto || "");
+    $("#espConteudo").hidden = false;
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+    $("#espConteudo").scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "center" });
+  });
+
+  $("#espMusica").addEventListener("click", () => {
+    if (audio.paused) { audio.play(); $("#espMusica").textContent = "Pausar música"; }
+    else { audio.pause(); $("#espMusica").textContent = "Tocar música"; }
+  });
+}
+
+function abrirSite() {
+  $("#site").hidden = false;
+  window.scrollTo(0, 0);
+  montarConteudo();
+  montarEspecial();
+  atualizar();
+  setInterval(atualizar, 1000);
+  if (CONFIG.quiz.length) mostrarPergunta(); else $("#quizSec").hidden = true;
+}
+</script>
+</body>
+</html>
